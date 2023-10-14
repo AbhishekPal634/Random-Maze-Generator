@@ -14,12 +14,13 @@ public:
         n = rand() % 4 + 3;
         system("cls");
         cout << "Find the shortest path from the START position to the END position" << endl;
-        cout << "You can move only RIGHT or DOWN" << endl;
+        cout << "You can move only LEFT, RIGHT, UP or DOWN" << endl;
         cout << "'.' denotes the path you can travel on and '*' denotes obstacle. You cannot travel through an obstacle" << endl;
         cout << endl;
     }
 
     void generateMaze() {
+        grid.clear();
         grid.resize(m, vector<char>(n));
         srand((int)time(0));
         for (int i = 0; i < m; ++i) {
@@ -50,14 +51,20 @@ public:
 
     int pathCalc(int x, int y, int m, int n) {
 
+        if (x < 0 || x >= m || y < 0 || y >= n)
+            return 0;
         if (x == m - 1 && y == n - 1)
             return 1;
-        if ((x > m - 1 || y > n - 1) || grid[x][y] == '*')
+        if (grid[x][y] == '*')
             return 0;
         if (dp[x][y] != -1)
             return dp[x][y];
 
-        return dp[x][y] = pathCalc(x + 1, y, m, n) + pathCalc(x, y + 1, m, n);
+        grid[x][y] = '*';
+        int totalPath = pathCalc(x + 1, y, m, n) + pathCalc(x, y + 1, m, n) + pathCalc(x - 1, y, m, n) + pathCalc(x, y - 1, m, n);
+        grid[x][y] = '.';
+
+        return totalPath;
     }
 
     void totalPaths() {
@@ -72,8 +79,8 @@ public:
 
         queue<pair<int,int>> q;
 
-        int dx[] = {0, 1};
-        int dy[] = {1, 0};
+        int dx[] = {0, 1, 0, -1};
+        int dy[] = {1, 0, -1, 0};
 
         q.emplace(0,0);
         distance[0][0] = 0;
@@ -83,7 +90,7 @@ public:
             int curr_y = (q.front()).second;
             q.pop();
 
-            for (int i = 0; i < 2; ++i) {
+            for (int i = 0; i < 4; ++i) {
                 int new_x = curr_x + dx[i];
                 int new_y = curr_y + dy[i];
 
