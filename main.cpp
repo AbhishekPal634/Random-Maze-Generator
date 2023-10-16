@@ -102,8 +102,38 @@ public:
         }
         if (distance[m-1][n-1] == INF)
             cout << "No paths available" << endl;
-        else
-            cout << "\nThe distance covered in the shortest path from START to END is : " << distance[m-1][n-1] << endl;
+        else {
+            cout << "\nThe distance covered in the shortest path from START to END is : " << distance[m - 1][n - 1]
+                 << endl;
+            cout << "\nThe coordinates for the short path traversal is : ";
+            int x = m - 1;
+            int y = n - 1;
+            vector<pair<int,int>> path;
+            while (x != 0 || y != 0) {
+                path.emplace_back(x, y);
+
+                int min_x = -1, min_y = -1, min_distance = INF;
+                for (int i = 0; i < 4; ++i) {
+                    int new_x = x + dx[i];
+                    int new_y = y + dy[i];
+
+                    if ((new_x >= 0 && new_x < m) && (new_y >= 0 && new_y < n) && grid[new_x][new_y] != '*' && distance[new_x][new_y] < min_distance) {
+                        min_distance = distance[new_x][new_y];
+                        min_x = new_x;
+                        min_y = new_y;
+                    }
+                }
+
+                x = min_x;
+                y = min_y;
+            }
+            reverse(path.begin(), path.end());
+            cout << "(0, 0)";
+            for (auto i : path) {
+                cout << " -> ";
+                cout << "(" << i.first << ", " << i.second << ")";
+            }
+        }
     }
 };
 
